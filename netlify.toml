@@ -1,0 +1,14 @@
+# Este ficheiro diz ao Netlify como construir e servir o seu site.
+
+[build]
+  # O diretório onde as suas funções serverless estão localizadas.
+  functions = "functions/"
+
+[[redirects]]
+  # Esta regra é a parte mais importante.
+  # Ela diz ao Netlify: "Qualquer pedido que o navegador faça para '/api/qualquercoisa'..."
+  from = "/api/*"
+  # "...deve, na verdade, executar a função serverless chamada 'qualquercoisa' que está na pasta de funções."
+  to = "/.netlify/functions/:splat"
+  # O status 200 significa que isto acontece nos bastidores, sem que o utilizador perceba.
+  status = 200
