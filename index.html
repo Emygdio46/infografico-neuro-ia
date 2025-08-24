@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Anestesia em Urgências Neurológicas (com IA)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F0F4F8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-left: 5px solid #4278B9;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .text-primary { color: #0B2D48; }
+        .text-secondary { color: #205493; }
+        .text-accent { color: #F5A623; }
+        .bg-primary { background-color: #0B2D48; }
+        .bg-secondary { background-color: #205493; }
+        .flow-arrow {
+            font-size: 2rem;
+            line-height: 1;
+            color: #4278B9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 2rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 0.75rem;
+            position: relative;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0B2D48;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .tts-button {
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        .tts-button:hover {
+            transform: scale(1.2);
+        }
+        .tts-button.playing {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-primary text-white text-center py-8 px-4">
+        <h1 class="text-4xl md:text-5xl font-black tracking-tight">Anestesia em Urgências Neurológicas</h1>
+        <p class="text-lg md:text-xl mt-2 max-w-3xl mx-auto">Um Guia Visual de Fisiologia e Farmacologia para Prevenir a Lesão Cerebral Secundária</p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="gemini-features" class="mb-12 card text-center border-l-amber-500">
+            <h2 class="text-2xl font-bold text-primary mb-4">Funcionalidades com IA Gemini ✨</h2>
+            <p class="text-gray-600 mb-6">Utilize a inteligência artificial para aprofundar a sua compreensão e aplicação deste protocolo.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                <button id="generateSummaryBtn" class="bg-secondary text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">✨ Gerar Resumo do Protocolo</button>
+                <button id="simulateScenarioBtn" class="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors">✨ Simular Cenário Clínico</button>
+            </div>
+        </section>
+
+        <section id="monro-kellie" class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <h2 class="text-3xl font-bold text-center text-primary">O Equilíbrio Intracraniano</h2>
+                <span class="tts-button" data-section="monro-kellie" title="Ouvir resumo da secção">🔊</span>
+            </div>
+            <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">O crânio é um compartimento rígido com volume constante, composto por três elementos. Um aumento em um deles deve ser compensado pela diminuição de outro para manter a pressão intracraniana (PIC) normal.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="card">
+                    <h3 class="text-xl font-bold text-center text-secondary mb-4">Doutrina de Monro-Kellie</h3>
+                    <div class="chart-container" style="height: 300px; max-height: 300px;">
+                        <canvas id="monroKellieChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold text-center text-secondary mb-4">Curva de Complacência Intracraniana</h3>
+                    <div class="chart-container" style="height: 300px; max-height: 300px;">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                    <p class="text-center text-sm text-gray-600 mt-2">Quando os mecanismos de compensação se esgotam, a complacência diminui e pequenos aumentos de volume causam elevações exponenciais da PIC.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="fisiologia" class="mb-12">
+            <div class="flex items-center justify-center mb-8">
+                <h2 class="text-3xl font-bold text-center text-primary">Fisiologia Cerebral Crítica</h2>
+                <span class="tts-button" data-section="fisiologia" title="Ouvir resumo da secção">🔊</span>
+            </div>
+            <div class="card bg-secondary text-white text-center p-6 mb-8">
+                <h3 class="text-2xl font-bold">Pressão de Perfusão Cerebral (PPC)</h3>
+                <p class="text-4xl font-black my-4">PPC = PAM - PIC</p>
+                <p class="max-w-2xl mx-auto">Esta é a equação fundamental da neuroanestesia. A PPC representa o gradiente de pressão que impulsiona o fluxo sanguíneo para o cérebro.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                <div class="card">
+                    <h4 class="text-xl font-bold text-secondary">PIC Normal</h4>
+                    <p class="text-5xl font-black text-primary my-2">5-15 <span class="text-2xl">mmHg</span></p>
+                    <p class="text-gray-600">Valores em repouso na posição supina.</p>
+                </div>
+                <div class="card border-l-red-500">
+                    <h4 class="text-xl font-bold text-red-600">Hipertensão Intracraniana (HIC)</h4>
+                    <p class="text-5xl font-black text-red-600 my-2">>22 <span class="text-2xl">mmHg</span></p>
+                    <p class="text-gray-600">Uma PIC sustentada acima deste valor ameaça a perfusão cerebral.</p>
+                </div>
+                <div class="card border-l-green-500">
+                    <h4 class="text-xl font-bold text-green-700">Alvo de PPC (TCE)</h4>
+                    <p class="text-5xl font-black text-green-700 my-2">60-70 <span class="text-2xl">mmHg</span></p>
+                    <p class="text-gray-600">Manter a PPC nesta faixa é o objetivo na maioria das emergências como o TCE grave.</p>
+                </div>
+            </div>
+             <div class="card mt-8">
+                    <h3 class="text-xl font-bold text-center text-secondary mb-4">Tríade de Cushing: Um Sinal Tardio</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-around text-center">
+                        <div class="p-4 rounded-lg"><p class="text-4xl"> hipertensão arterial sistêmica </p></div>
+                        <div class="flow-arrow hidden md:block">+</div>
+                        <div class="p-4 rounded-lg"><p class="text-4xl"> bradicardia </p></div>
+                        <div class="flow-arrow hidden md:block">+</div>
+                        <div class="p-4 rounded-lg"><p class="text-4xl"> padrão respiratório irregular </p></div>
+                    </div>
+                     <p class="text-center text-sm text-gray-600 mt-4">É um sinal ominoso que indica descompensação iminente e compressão do tronco cerebral.</p>
+                </div>
+        </section>
+
+        <section id="farmacologia" class="mb-12">
+            <div class="flex items-center justify-center mb-2">
+                <h2 class="text-3xl font-bold text-center text-primary">Farmacologia Aplicada</h2>
+                <span class="tts-button" data-section="farmacologia" title="Ouvir resumo da secção">🔊</span>
+            </div>
+            <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">A escolha dos fármacos deve ponderar o efeito anestésico desejado com o impacto na fisiologia cerebral. O controlo do CMRO₂ (Metabolismo Cerebral de O₂), FSC (Fluxo Sanguíneo Cerebral) e PIC é essencial.</p>
+            <div class="card">
+                <h3 class="text-xl font-bold text-center text-secondary mb-4">Efeitos dos Agentes Anestésicos na Hemodinâmica Cerebral</h3>
+                <div class="chart-container" style="height: 500px; max-height: 500px; max-width: 1000px;">
+                    <canvas id="pharmaChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="monitorizacao" class="mb-12">
+            <div class="flex items-center justify-center mb-8">
+                <h2 class="text-3xl font-bold text-center text-primary">Monitorização da Pressão Intracraniana (PIC)</h2>
+                <span class="tts-button" data-section="monitorizacao" title="Ouvir resumo da secção">🔊</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card border-l-amber-500">
+                    <h3 class="text-xl font-bold text-secondary">Cateter Intraventricular (DVE)</h3>
+                    <p class="font-bold my-2 text-amber-600">Padrão-Ouro</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><span class="font-semibold">Vantagens:</span> Máxima precisão; permite drenagem terapêutica de LCR para tratar a HIC.</li>
+                        <li><span class="font-semibold">Desvantagens:</span> Mais invasivo; risco de hemorragia e infecção; difícil inserção com ventrículos colapsados.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold text-secondary">Cateter Intraparenquimatoso</h3>
+                    <p class="font-bold my-2 text-secondary">Alternativa</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><span class="font-semibold">Vantagens:</span> Alta precisão; mais fácil de inserir em edema grave.</li>
+                        <li><span class="font-semibold">Desvantagens:</span> Apenas monitorização (sem terapia); risco de "deriva do zero".</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold text-secondary">Diâmetro da Bainha do Nervo Óptico</h3>
+                     <p class="font-bold my-2 text-secondary">Rastreio/Triagem Não Invasiva</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><span class="font-semibold">Vantagens:</span> Rápido, não invasivo, portátil, alta sensibilidade para HIC.</li>
+                        <li><span class="font-semibold">Desvantagens:</span> Medição indireta; dependente do operador. Um diâmetro > 5.0-5.8 mm é altamente sugestivo de HIC.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="abordagens" class="mb-12">
+             <div class="flex items-center justify-center mb-2">
+                <h2 class="text-3xl font-bold text-center text-primary">Abordagens em Condições Específicas</h2>
+                <span class="tts-button" data-section="abordagens" title="Ouvir resumo da secção">🔊</span>
+            </div>
+            <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">Não existe uma abordagem hemodinâmica única. O diagnóstico preciso da fisiopatologia subjacente é essencial para definir a estratégia anestésica correta.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="card border-l-red-500">
+                    <h3 class="text-xl font-bold text-red-600">Traumatismo Cranioencefálico (TCE)</h3>
+                    <p class="text-lg font-black text-primary my-3">INIMIGO: HIPOTENSÃO</p>
+                    <p class="text-gray-700">Um único episódio de hipotensão pode dobrar a mortalidade.</p>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><span class="font-semibold">Alvo de PPC:</span> 60-70 mmHg.</li>
+                        <li><span class="font-semibold">Fluidos:</span> Soluções cristaloides isotónicas (Salina 0.9%). Ringer Lactato é contraindicado.</li>
+                        <li><span class="font-semibold">Ventilação:</span> Manter normocapnia (PaCO₂ 35-45 mmHg).</li>
+                    </ul>
+                </div>
+                <div class="card border-l-sky-500">
+                    <h3 class="text-xl font-bold text-sky-600">AVC Isquémico (Trombectomia)</h3>
+                    <p class="text-lg font-black text-primary my-3">INIMIGO: HIPOTENSÃO</p>
+                    <p class="text-gray-700">A instabilidade hemodinâmica pode anular o benefício de uma recanalização bem-sucedida.</p>
+                     <ul class="list-disc list-inside space-y-2 mt-4">
+                        <li><span class="font-semibold">AG vs. SC:</span> A Anestesia Geral (AG) tem maior sucesso de recanalização, mas sem diferença no desfecho funcional.</li>
+                        <li><span class="font-semibold">Foco principal:</span> Prevenir a hipotensão, independentemente da técnica.</li>
+                     </ul>
+                </div>
+                <div class="card border-l-orange-500">
+                    <h3 class="text-xl font-bold text-orange-600">HSA (Aneurisma Não Tratado)</h3>
+                    <p class="text-lg font-black text-primary my-3">INIMIGO: HIPERTENSÃO</p>
+                    <p class="text-gray-700">Aumentos abruptos da PAM podem levar a um novo sangramento, que é frequentemente fatal.</p>
+                    <ul class="list-disc list-inside space-y-2 mt-4">
+                         <li><span class="font-semibold">Controlo da PA:</span> Controlo rigoroso da pressão arterial, mantendo-a em níveis mais baixos.</li>
+                         <li><span class="font-semibold">Vasoespasmo:</span> Complicação tardia (dias 4-14) que pode exigir hipertensão induzida.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="hic-refrataria" class="mb-12">
+            <div class="flex items-center justify-center mb-8">
+                <h2 class="text-3xl font-bold text-center text-primary">Manejo da HIC Refratária</h2>
+                <span class="tts-button" data-section="hic-refrataria" title="Ouvir resumo da secção">🔊</span>
+            </div>
+             <p class="text-center text-gray-600 mb-8 max-w-4xl mx-auto">PIC que permanece elevada (>22 mmHg) apesar das medidas de primeira linha, associada a uma mortalidade extremamente elevada.</p>
+            <div class="flex flex-col md:flex-row items-stretch justify-center text-center gap-4">
+                <div class="card flex-1"><h3 class="text-xl font-bold text-secondary">Coma Barbitúrico</h3><p class="mt-2 text-sm">Reduz drasticamente o CMRO₂, FSC e PIC, mas com risco de hipotensão severa.</p></div>
+                <div class="self-center flow-arrow mx-4">→</div>
+                <div class="card flex-1"><h3 class="text-xl font-bold text-secondary">Hipotermia Terapêutica</h3><p class="mt-2 text-sm">Uso controverso, não recomendado como rotina devido à falta de benefício e aumento de complicações.</p></div>
+                <div class="self-center flow-arrow mx-4">→</div>
+                <div class="card flex-1 border-l-red-500"><h3 class="text-xl font-bold text-red-600">Craniectomia Descompressiva</h3><p class="mt-2 text-sm">Intervenção de último recurso que salva vidas, mas pode resultar em sobreviventes com incapacidade neurológica grave.</p></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="absolute top-4 right-6 text-2xl font-bold cursor-pointer">&times;</span>
+            <h3 id="modalTitle" class="text-2xl font-bold text-primary mb-4">Resultado da IA</h3>
+            <div id="modalBody">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scenarioModal" class="modal">
+        <div class="modal-content">
+            <span id="closeScenarioModal" class="absolute top-4 right-6 text-2xl font-bold cursor-pointer">&times;</span>
+            <h3 class="text-2xl font-bold text-primary mb-4">Simular Cenário Clínico</h3>
+            <p class="text-gray-600 mb-4">Descreva a situação clínica abaixo (ex: "Paciente com TCE grave, Glasgow 6, PIC 25 mmHg, PA 100/60 mmHg").</p>
+            <textarea id="scenarioInput" class="w-full h-32 p-2 border border-gray-300 rounded-lg" placeholder="Descreva o cenário..."></textarea>
+            <button id="generatePlanBtn" class="mt-4 bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-colors w-full">Gerar Plano de Ação</button>
+        </div>
+    </div>
+
+    <footer class="bg-primary text-white text-center py-4 mt-8">
+        <p class="text-sm">Infográfico gerado com base no documento "Anestesia en Urgencias Neurológicas.docx". Para fins educacionais.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const resultModal = document.getElementById('resultModal');
+            const scenarioModal = document.getElementById('scenarioModal');
+            const closeModal = document.getElementById('closeModal');
+            const closeScenarioModal = document.getElementById('closeScenarioModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const generateSummaryBtn = document.getElementById('generateSummaryBtn');
+            const simulateScenarioBtn = document.getElementById('simulateScenarioBtn');
+            const generatePlanBtn = document.getElementById('generatePlanBtn');
+            const scenarioInput = document.getElementById('scenarioInput');
+            const ttsButtons = document.querySelectorAll('.tts-button');
+            let currentAudio = null;
+
+            // A chave de API foi removida daqui para segurança.
+            // As chamadas agora são feitas para a nossa função serverless.
+            const serverlessEndpoint = '/api/gemini'; 
+
+            function showModal(title) {
+                modalTitle.textContent = title;
+                modalBody.innerHTML = '<div class="loader"></div>';
+                resultModal.style.display = 'block';
+            }
+
+            function hideModal() {
+                resultModal.style.display = 'none';
+            }
+
+            closeModal.onclick = hideModal;
+            window.onclick = function(event) {
+                if (event.target == resultModal) {
+                    hideModal();
+                }
+                if (event.target == scenarioModal) {
+                    scenarioModal.style.display = 'none';
+                }
+            }
+
+            async function callServerlessAPI(payload) {
+                try {
+                    const response = await fetch(serverlessEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Erro do servidor: ${response.status} ${errorText}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error("Erro ao chamar a função serverless:", error);
+                    // Retorna um objeto com a estrutura de erro esperada para ser tratado.
+                    return { error: { message: "Desculpe, ocorreu um erro de comunicação. Por favor, tente novamente mais tarde." } };
+                }
+            }
+
+            function getFullProtocolText() {
+                let text = '';
+                document.querySelectorAll('main section').forEach(section => {
+                    const title = section.querySelector('h2');
+                    if (title) {
+                        text += title.innerText + '\n\n';
+                        section.querySelectorAll('p, li, th, td').forEach(el => {
+                            text += el.innerText + '\n';
+                        });
+                        text += '\n---\n\n';
+                    }
+                });
+                return text;
+            }
+
+            generateSummaryBtn.addEventListener('click', async () => {
+                showModal('Resumo do Protocolo');
+                const protocolText = getFullProtocolText();
+                const prompt = `Você é um especialista em resumos médicos. Com base no seguinte protocolo de anestesia em urgências neurológicas, crie um resumo conciso em tópicos para um anestesista usar como referência rápida. Foque nos objetivos, alvos fisiológicos (PIC, PPC), e considerações farmacológicas chave. Responda em Markdown. Contexto do protocolo: \n\n${protocolText}`;
+                
+                const data = await callServerlessAPI({ prompt: prompt, type: 'text' });
+                
+                if (data.candidates && data.candidates.length > 0) {
+                    const result = data.candidates[0].content.parts[0].text;
+                    modalBody.innerHTML = result.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                } else {
+                    modalBody.textContent = data.error?.message || "Não foi possível gerar o resumo.";
+                }
+            });
+
+            simulateScenarioBtn.addEventListener('click', () => {
+                scenarioModal.style.display = 'block';
+            });
+            
+            closeScenarioModal.onclick = () => {
+                scenarioModal.style.display = 'none';
+            };
+
+            generatePlanBtn.addEventListener('click', async () => {
+                const scenario = scenarioInput.value;
+                if (!scenario.trim()) {
+                    alert("Por favor, descreva um cenário.");
+                    return;
+                }
+                scenarioModal.style.display = 'none';
+                showModal('Plano de Ação para o Cenário');
+                const protocolText = getFullProtocolText();
+                const prompt = `Você é um anestesista especialista a atuar como uma ferramenta de apoio à decisão clínica. O seu conhecimento está estritamente limitado ao protocolo de anestesia em urgências neurológicas fornecido. Um utilizador descreveu um cenário clínico. Com base APENAS no protocolo abaixo, forneça um plano de ação claro, passo a passo. Não forneça informações ou conselhos fora deste protocolo. Responda em Markdown. \n\n---PROTOCOLO---\n${protocolText}\n\n---CENÁRIO---\n${scenario}\n\n---PLANO DE AÇÃO---`;
+                
+                const data = await callServerlessAPI({ prompt: prompt, type: 'text' });
+
+                if (data.candidates && data.candidates.length > 0) {
+                    const result = data.candidates[0].content.parts[0].text;
+                    modalBody.innerHTML = result.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                } else {
+                    modalBody.textContent = data.error?.message || "Não foi possível gerar o plano de ação.";
+                }
+            });
+            
+            function base64ToArrayBuffer(base64) {
+                const binaryString = window.atob(base64);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes.buffer;
+            }
+
+            function pcmToWav(pcmData, sampleRate) {
+                const numChannels = 1;
+                const bytesPerSample = 2; 
+                const blockAlign = numChannels * bytesPerSample;
+                const byteRate = sampleRate * blockAlign;
+                const dataSize = pcmData.length * bytesPerSample;
+                const buffer = new ArrayBuffer(44 + dataSize);
+                const view = new DataView(buffer);
+
+                function writeString(view, offset, string) {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                }
+
+                writeString(view, 0, 'RIFF');
+                view.setUint32(4, 36 + dataSize, true);
+                writeString(view, 8, 'WAVE');
+                writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, numChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, byteRate, true);
+                view.setUint16(32, blockAlign, true);
+                view.setUint16(34, 16, true);
+                writeString(view, 36, 'data');
+                view.setUint32(40, dataSize, true);
+
+                const pcm16 = new Int16Array(pcmData.buffer);
+                for (let i = 0; i < pcmData.length; i++) {
+                    view.setInt16(44 + i * 2, pcm16[i], true);
+                }
+                return new Blob([view], { type: 'audio/wav' });
+            }
+
+            async function callTtsOnServer(text, button) {
+                try {
+                    const result = await callServerlessAPI({ prompt: text, type: 'tts' });
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    const audioData = part?.inlineData?.data;
+                    const mimeType = part?.inlineData?.mimeType;
+
+                    if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                        const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1], 10) : 24000;
+                        const pcmData = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmData);
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        const audioUrl = URL.createObjectURL(wavBlob);
+
+                        if (currentAudio) {
+                            currentAudio.pause();
+                        }
+                        currentAudio = new Audio(audioUrl);
+                        currentAudio.play();
+                        
+                        document.querySelectorAll('.tts-button.playing').forEach(b => b.classList.remove('playing'));
+                        button.classList.add('playing');
+                        
+                        currentAudio.onended = () => {
+                           button.classList.remove('playing');
+                           currentAudio = null;
+                        };
+                    } else {
+                       throw new Error("Dados de áudio inválidos recebidos.");
+                    }
+                } catch (error) {
+                    console.error("Erro ao gerar TTS:", error);
+                    alert("Não foi possível gerar o áudio.");
+                    button.classList.remove('playing');
+                }
+            }
+
+            ttsButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.classList.contains('playing') && currentAudio) {
+                        currentAudio.pause();
+                        currentAudio = null;
+                        button.classList.remove('playing');
+                        return;
+                    }
+
+                    const sectionId = button.dataset.section;
+                    const sectionElement = document.getElementById(sectionId);
+                    if (sectionElement) {
+                        let textToSpeak = '';
+                        const title = sectionElement.querySelector('h2');
+                        if (title) textToSpeak += title.innerText + ". ";
+                        sectionElement.querySelectorAll('p, li').forEach(el => {
+                            textToSpeak += el.innerText + ". ";
+                        });
+                        callTtsOnServer(textToSpeak.substring(0, 1000), button); 
+                    }
+                });
+            });
+
+            const tooltipTitleCallback = function(tooltipItems) {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+
+            const sharedTooltipOptions = {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        }
+                    }
+                }
+            };
+
+            const monroKellieCtx = document.getElementById('monroKellieChart').getContext('2d');
+            new Chart(monroKellieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Parênquima Cerebral (80%)', 'Sangue (10%)', 'Líquor (LCR) (10%)'],
+                    datasets: [{
+                        data: [80, 10, 10],
+                        backgroundColor: ['#0B2D48', '#4278B9', '#B0C4DE'],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: sharedTooltipOptions.plugins.tooltip
+                    }
+                }
+            });
+            
+            const complianceCtx = document.getElementById('complianceChart').getContext('2d');
+            new Chart(complianceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['0', '1', '2', '3', '4', '5', '5.5', '6'],
+                    datasets: [{
+                        label: 'Pressão Intracraniana (PIC)',
+                        data: [10, 11, 12, 14, 18, 25, 50, 90],
+                        borderColor: '#D8315B',
+                        backgroundColor: 'rgba(216, 49, 91, 0.2)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'PIC (mmHg)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Volume Adicionado (unidades arbitrárias)' }
+                        }
+                    },
+                    plugins: {
+                         legend: { display: false },
+                         tooltip: sharedTooltipOptions.plugins.tooltip
+                    }
+                }
+            });
+            
+            const pharmaCtx = document.getElementById('pharmaChart').getContext('2d');
+            const pharmaData = {
+                labels: ['Propofol', 'Etomidato', 'Cetamina', 'Sevoflurano', 'Opioides', 'Rocurônio'],
+                datasets: [
+                    {
+                        label: 'PIC',
+                        data: [-2, -2, 1, 1, 0, 0],
+                        backgroundColor: '#0B2D48',
+                    },
+                    {
+                        label: 'FSC',
+                        data: [-2, -2, 1, 1, 0, 0],
+                        backgroundColor: '#205493',
+                    },
+                     {
+                        label: 'CMRO₂',
+                        data: [-2, -2, 1, -1, -0.5, 0],
+                        backgroundColor: '#4278B9',
+                    },
+                    {
+                        label: 'PPC (indireto)',
+                        data: [-1, 0, 1, -1, 0, 0],
+                        backgroundColor: '#F5A623',
+                    }
+                ]
+            };
+            new Chart(pharmaCtx, {
+                type: 'bar',
+                data: pharmaData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                     scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    switch(value) {
+                                        case 2: return '↑↑ Aumento Ac.';
+                                        case 1: return '↑ Aumento';
+                                        case 0: return '↔ Nulo';
+                                        case -1: return '↓ Redução';
+                                        case -2: return '↓↓ Redução Ac.';
+                                        default: return '';
+                                    }
+                                }
+                            },
+                             title: { display: true, text: 'Efeito na Hemodinâmica Cerebral' }
+                        }
+                    },
+                     plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                title: tooltipTitleCallback,
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const value = context.raw;
+                                    let effect = '↔ Nulo';
+                                     if (value === 2) effect = '↑↑ Aumento Ac.';
+                                     else if (value === 1) effect = '↑ Aumento';
+                                     else if (value === -1) effect = '↓ Redução';
+                                     else if (value === -2) effect = '↓↓ Redução Ac.';
+                                     else if (value === -0.5) effect = '↓ Redução Leve';
+                                    label += effect;
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
